@@ -117,7 +117,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         </ul>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-10 py-4 text-black  md:ml-6 lg:ml-9 lg:mt-72"
+          className="flex items-center gap-1 font-bold px-10 py-4 text-black  md:ml-6 lg:ml-9 lg:mt-72"
         >
           <IoIosLogOut className="size-8  p-1 text-white rounded-md" />
           <span className="text-white">Logout</span>

@@ -64,12 +64,12 @@ const AllFaq = () => {
             </div>
 
             {/* List of FAQs */}
-            <div className="mt-5 px-10">
-                <h2 className="text-2xl font-medium">All FAQs</h2>
+            <div className="mt-5 px-8">
+                {/* <h2 className="text-2xl font-medium">All FAQs</h2> */}
                 <div className="my-5 ">
                     <div>
                         {faqs.map((faq, index) => (
-                            <div key={index} className=" flex items-center justify-between border-b py-3">
+                            <div key={index} className=" flex items-center justify-between border-b py-10">
                                 <div>
                                     <p className="font-medium text-lg">{faq.question}</p>
                                     <p>{faq.answer}</p>

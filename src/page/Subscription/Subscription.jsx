@@ -68,10 +68,7 @@ const Subscription = () => {
             message.error('Please fill all fields!');
             return;
         }
-        if (!image) {
-            message.error('Please upload an image!');
-            return;
-        }
+        
         message.success(isEditing ? 'Subscription updated successfully!' : 'Subscription added successfully!');
         handleCancel();
     };
