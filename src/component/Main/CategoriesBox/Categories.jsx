@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { Modal, Input, Upload, message, Pagination } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Modal, Input, message, Pagination } from "antd";
+import { FaPlus } from "react-icons/fa";
 import categoryImage from "/public/category/category.png"; // Update this path as necessary
-import { Link } from "react-router-dom";
 
 const Categories = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [image, setImage] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(4); // Number of items per page
+  const [pageSize] = useState(4);
   const [categories, setCategories] = useState([
     { id: 1, name: "Real Estate", image: categoryImage },
     { id: 2, name: "Technology", image: categoryImage },
@@ -22,28 +22,33 @@ const Categories = () => {
     { id: 8, name: "Food", image: categoryImage },
   ]);
 
-  // Handle open modal for adding or editing
-  const showModal = (edit = false, category = null) => {
-    setIsEditing(edit);
-    setIsModalVisible(true);
-    if (edit) {
-      setCategoryName(category.name); // Pre-fill for editing
-      setImage(category.image); // Pre-fill image for editing
-    } else {
-      setCategoryName(""); // Clear fields for adding new category
-      setImage(null); // Clear image for adding
-    }
+  const showAddModal = () => {
+    setCategoryName("");
+    setImage(null);
+    setIsAddModalVisible(true);
   };
 
-  // Handle modal close
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setCategoryName(""); // Clear category name when modal is closed
-    setImage(null); // Reset image
+  const showEditModal = (category) => {
+    setCurrentCategory(category);
+    setCategoryName(category.name);
+    setImage(category.image);
+    setIsEditModalVisible(true);
   };
 
-  // Handle form submit for adding/editing category
-  const handleSubmit = () => {
+  const closeAddModal = () => {
+    setIsAddModalVisible(false);
+    setCategoryName("");
+    setImage(null);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalVisible(false);
+    setCategoryName("");
+    setImage(null);
+    setCurrentCategory(null);
+  };
+
+  const handleAddCategory = () => {
     if (!categoryName) {
       message.error("Please enter a category name!");
       return;
@@ -53,49 +58,54 @@ const Categories = () => {
       return;
     }
 
-    if (isEditing) {
-      // Update category
-      const updatedCategories = categories.map((category) =>
-        category.name === categoryName ? { ...category, name: categoryName, image: image } : category
-      );
-      setCategories(updatedCategories);
-      message.success("Category edited successfully!");
-    } else {
-      // Add new category
-      const newCategory = {
-        id: categories.length + 1,
-        name: categoryName,
-        image: image,
-      };
-      setCategories([...categories, newCategory]);
-      message.success("Category added successfully!");
-    }
+    const newCategory = {
+      id: categories.length + 1,
+      name: categoryName,
+      image: URL.createObjectURL(image),
+    };
 
-    handleCancel();
+    setCategories([...categories, newCategory]);
+    message.success("Category added successfully!");
+    closeAddModal();
   };
 
-  // Handle image upload
-  const handleImageUpload = (info) => {
-    if (info.file.status === "done") {
-      message.success(`${info.file.name} file uploaded successfully`);
-      setImage(info.file.originFileObj);
-    } else if (info.file.status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
+  const handleEditCategory = () => {
+    if (!categoryName) {
+      message.error("Please enter a category name!");
+      return;
+    }
+    if (!image) {
+      message.error("Please upload an image!");
+      return;
+    }
+
+    const updatedCategories = categories.map((category) =>
+      category.id === currentCategory.id
+        ? { ...category, name: categoryName, image: URL.createObjectURL(image) }
+        : category
+    );
+
+    setCategories(updatedCategories);
+    message.success("Category updated successfully!");
+    closeEditModal();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
     }
   };
 
-  // Handle page change for pagination
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  // Get categories for the current page
   const paginatedCategories = categories.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
-  // Handle category deletion
   const handleDeleteCategory = (categoryId) => {
     const updatedCategories = categories.filter((category) => category.id !== categoryId);
     setCategories(updatedCategories);
@@ -106,15 +116,14 @@ const Categories = () => {
     <section>
       <div className="w-full md:flex justify-end items-center py-6">
         <button
-          type="primary"
-          className="px-2 md:px-5 py-3 bg-[#038c6d] text-white flex justify-center items-center gap-1 rounded text-sm md:mb-0"
-          onClick={() => showModal(false)}
+          className="px-2 md:px-5 py-3 text-xl bg-[#038c6d] text-white flex justify-center items-center gap-1 rounded md:mb-0"
+          onClick={showAddModal}
         >
-          Add Category
+          <FaPlus className="text-xl font-semibold text-white" /> Add Category
         </button>
       </div>
 
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-5">
         {paginatedCategories.map((category) => (
           <div key={category.id} className="border-shadow pb-5 rounded-lg overflow-hidden">
             <img className="w-full max-h-[250px]" src={category.image} alt="Category" />
@@ -129,9 +138,8 @@ const Categories = () => {
                 Delete
               </button>
               <button
-                type="primary"
                 className="w-full py-3 px-6 border bg-[#038c6d] text-white rounded-lg"
-                onClick={() => showModal(true, category)}
+                onClick={() => showEditModal(category)}
               >
                 Edit Category
               </button>
@@ -140,7 +148,6 @@ const Categories = () => {
         ))}
       </div>
 
-      {/* Pagination */}
       <div className="flex justify-center mt-10">
         <Pagination
           current={currentPage}
@@ -150,15 +157,10 @@ const Categories = () => {
         />
       </div>
 
-      {/* Modal for adding/editing category */}
-      <Modal
-        title={isEditing ? "Edit Category" : "Add Category"}
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null} // Remove default cancel and ok buttons
-      >
+      {/* Add Modal */}
+      <Modal title="Add Category" visible={isAddModalVisible} onCancel={closeAddModal} footer={null}>
         <div className="my-5">
-          <span className="mb-3 font-semibold text-base">Asset Category name</span>
+          <span className="mb-3 font-semibold text-base">Category Name</span>
           <Input
             placeholder="Enter category name"
             value={categoryName}
@@ -167,27 +169,43 @@ const Categories = () => {
         </div>
 
         <div className="my-5 w-full">
-          <span className="mb-3 font-semibold text-base block">Asset Category Image</span>
-          <Upload
-            customRequest={handleImageUpload}
-            className="border-dashed border !w-full block border-gray-300 rounded-lg p-2"
-            showUploadList={false}
+          <span className="mb-3 font-semibold text-base block">Category Image</span>
+          <input
+            type="file"
             accept="image/*"
-            beforeUpload={() => false} // Disable auto upload
-          >
-            <button className="block !w-full px-32" icon={<UploadOutlined />}>
-              Upload Category Image
-            </button>
-          </Upload>
-          {image && <div className="mt-2">Image uploaded successfully!</div>}
+            className="block w-full border-dashed border-gray-300 rounded-lg p-2"
+            onChange={handleFileChange}
+          />
         </div>
 
-        <button
-          type="primary"
-          className="w-full py-3 bg-[#038c6d] text-white rounded-lg"
-          onClick={handleSubmit}
-        >
-          {isEditing ? "Update Category" : "Add Category"}
+        <button className="w-full py-3 bg-[#038c6d] text-white rounded-lg" onClick={handleAddCategory}>
+          Add Category
+        </button>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal title="Edit Category" visible={isEditModalVisible} onCancel={closeEditModal} footer={null}>
+        <div className="my-5">
+          <span className="mb-3 font-semibold text-base">Category Name</span>
+          <Input
+            placeholder="Enter category name"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+          />
+        </div>
+
+        <div className="my-5 w-full">
+          <span className="mb-3 font-semibold text-base block">Category Image</span>
+          <input
+            type="file"
+            accept="image/*"
+            className="block w-full border-dashed border-gray-300 rounded-lg p-2"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        <button className="w-full py-3 bg-[#038c6d] text-white rounded-lg" onClick={handleEditCategory}>
+          Update Category
         </button>
       </Modal>
     </section>

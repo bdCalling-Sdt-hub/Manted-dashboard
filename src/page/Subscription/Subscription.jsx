@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Input, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import subscriptionImage from '/public/category/category.png'; // You can replace with actual image for subscriptions
+import { FaPlus } from 'react-icons/fa';
 
 const Subscription = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -68,7 +69,7 @@ const Subscription = () => {
             message.error('Please fill all fields!');
             return;
         }
-        
+
         message.success(isEditing ? 'Subscription updated successfully!' : 'Subscription added successfully!');
         handleCancel();
     };
@@ -88,14 +89,14 @@ const Subscription = () => {
             <div className="w-full md:flex justify-end items-center py-6">
                 <button
                     type="primary"
-                    className="px-2 md:px-5 py-3 bg-[#038c6d] text-white flex justify-center items-center gap-1 rounded text-sm md:mb-0"
+                    className=" text-xl px-2 md:px-5 py-3 bg-[#038c6d] text-white flex justify-center items-center gap-1 rounded md:mb-0"
                     onClick={() => showModal(false)}
                 >
-                    Add Subscription
+                    <FaPlus className='text-xl font-semibold text-white' />  Add Subscription
                 </button>
             </div>
 
-            <div className="grid grid-cols-4 gap-5">
+            <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-5">
                 {subscriptions.map((subscription) => (
                     <div key={subscription.id} className="border-shadow pb-5 rounded-lg overflow-hidden">
                         <div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { Modal, Button, Input, Form, notification } from 'antd';
+import { FaPlus } from 'react-icons/fa';
 
 const AllFaq = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -55,16 +56,16 @@ const AllFaq = () => {
                 </Link>
                 <div>
                     <button
-                        className="bg-[#038c6d] text-white px-10 py-3 rounded-lg"
+                        className="bg-[#038c6d] text-white px-10 py-3 text-xl rounded-lg flex items-center gap-2"
                         onClick={showModal} // Open modal when clicking the button
                     >
-                        Add FAQ
+                       <FaPlus className='text-xl font-semibold text-white' /> Add FAQ
                     </button>
                 </div>
             </div>
 
             {/* List of FAQs */}
-            <div className="mt-5 px-8">
+            <div className="mt-5 md:px-8 px-3">
                 {/* <h2 className="text-2xl font-medium">All FAQs</h2> */}
                 <div className="my-5 ">
                     <div>
@@ -77,7 +78,7 @@ const AllFaq = () => {
                                 <div>
                                     <button
                                         onClick={() => handleDelete(index)} // Call delete function on button click
-                                        className='bg-[#dd1811] text-white px-10 py-3 rounded-lg'
+                                        className='bg-[#dd1811] text-white md:px-10 px-6 py-3 rounded-lg'
                                     >
                                         Delete
                                     </button>
@@ -117,10 +118,10 @@ const AllFaq = () => {
                     </Form.Item>
 
                     <div className="flex justify-end gap-4">
-                        <Button onClick={handleCancel} className="bg-gray-400 text-white">
+                        <Button onClick={handleCancel} className="bg-gray-400 text-white ">
                             Cancel
                         </Button>
-                        <Button type="primary" htmlType="submit" className="bg-[#038c6d] text-white">
+                        <Button type="primary" htmlType="submit" className="bg-[#038c6d] text-white ">
                             Add FAQ
                         </Button>
                     </div>
