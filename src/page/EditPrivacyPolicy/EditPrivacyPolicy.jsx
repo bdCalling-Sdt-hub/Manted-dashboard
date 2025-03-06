@@ -9,12 +9,24 @@ import { Form } from "antd";
 const EditPrivacyPolicy = () => {
   const [form] = Form.useForm();
   const [content, setContent] = useState(
-    "<h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at adipiscing proin et.</h1>"
+    ""
   ); // Default content for the privacy policy
 
-  const handleSubmit = () => {
+
+
+  const handleSubmit = async () => {
     console.log("Updated Privacy Policy Content:", content);
-    // Handle form submission, e.g., update the privacy policy in the backend
+
+    try {
+
+      // const res = await updatePrivacy(content);
+
+    } catch (error) {
+      console.log(error);
+    }
+
+
+
   };
 
   return (

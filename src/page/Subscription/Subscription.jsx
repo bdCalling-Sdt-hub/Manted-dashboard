@@ -3,6 +3,7 @@ import { Modal, Input, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import subscriptionImage from '/public/category/category.png'; // You can replace with actual image for subscriptions
 import { FaPlus } from 'react-icons/fa';
+import { useCreateSubScriptionMutation, useDeleteSubScriptionMutation, useGetSubScriptionQuery, useUpdateScriptionMutation } from '../../redux/features/subscription/subscription';
 
 const Subscription = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -10,7 +11,16 @@ const Subscription = () => {
     const [subscriptionName, setSubscriptionName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState(null);
+    const [duration, setDuration] = useState('weekly');
+    const [id, setId] = useState('');
+
+    // console.log(description);
+
+    const { data: getAllSubScription, isLoading } = useGetSubScriptionQuery();
+    const [createSubScription] = useCreateSubScriptionMutation();
+    const [updateSubScription] = useUpdateScriptionMutation();
+    const [deleteSubScription] = useDeleteSubScriptionMutation();
+    // console.log('subscription', getAllSubScription?.data);
 
     // Fake data for subscriptions
     const subscriptions = [
@@ -39,18 +49,19 @@ const Subscription = () => {
 
     // Handle open modal for adding or editing
     const showModal = (edit = false, subscription = {}) => {
+        console.log(subscription);
         setIsEditing(edit);
         setIsModalVisible(true);
         if (edit) {
             setSubscriptionName(subscription.name);
             setPrice(subscription.price);
-            setDescription(subscription.description);
-            setImage(subscription.image); // Pre-fill for editing
+            setDescription(subscription.details);
+            setId(subscription.id); // Pre-fill for editing
         } else {
             setSubscriptionName('');
             setPrice('');
             setDescription('');
-            setImage(null); // Clear fields for adding new subscription
+            setId(null);
         }
     };
 
@@ -60,29 +71,96 @@ const Subscription = () => {
         setSubscriptionName('');
         setPrice('');
         setDescription('');
-        setImage(null);
     };
 
     // Handle form submit for adding/editing subscription
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (!subscriptionName || !price || !description) {
             message.error('Please fill all fields!');
             return;
         }
 
-        message.success(isEditing ? 'Subscription updated successfully!' : 'Subscription added successfully!');
-        handleCancel();
+        console.log('subscriptionName', subscriptionName, 'price', price, 'description', description, 'duration', duration);
+
+        const formData = {
+            name: subscriptionName,
+            price: price,
+            details: description,
+            duration: duration
+        }
+
+        try {
+
+            const res = await createSubScription(formData).unwrap();
+            console.log(res);
+            // if(res?.data?.error){
+            //     message.error(res?.data?.error?.data?.message);
+            // }
+            if (res?.message) {
+                message.success(res?.message);
+                setDescription('');
+                handleCancel();
+            }
+
+
+        } catch (error) {
+            console.log(error);
+            message.error('Something went wrong');
+            setDescription('');
+        }
+
+        console.log('formData', formData);
+
+        setDescription('');
+    };
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        const formData = {
+            name: subscriptionName,
+            price: price,
+            details: description,
+            duration: duration,
+            id: id
+        }
+
+        try {
+
+            const res = await updateSubScription(formData).unwrap();
+            console.log(res);
+
+            if (res?.message) {
+                message.success(res?.message);
+                setDescription('');
+                handleCancel();
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+
+
+        console.log('formData', formData);
+
+        // setIsEditing(true);
+        // showModal(true);
     };
 
-    // Handle image upload
-    const handleImageUpload = (info) => {
-        if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-            setImage(info.file.originFileObj);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
+
+
+    const handleDelete = async (subscription) => {
+        console.log(subscription.id);
+
+        try {
+            const res = await deleteSubScription(subscription.id).unwrap();
+            if (res?.message) {
+                message.success(res?.message);
+            }
         }
-    };
+        catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <section>
@@ -97,15 +175,15 @@ const Subscription = () => {
             </div>
 
             <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-5">
-                {subscriptions.map((subscription) => (
+                {getAllSubScription?.data?.map((subscription) => (
                     <div key={subscription.id} className="border-shadow pb-5 rounded-lg overflow-hidden">
                         <div>
                             <h2 className="my-5 text-3xl font-semibold text-center">{subscription.name}</h2>
-                            <p className="text-center text-xl">{subscription.price}</p>
-                            <p className="my-5 px-5 text-base">{subscription.description}</p>
+                            <p className="text-center text-xl">${subscription.price} / {subscription.duration}</p>
+                            <p className="my-5 px-5 text-base">{subscription.details}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-3 px-5">
-                            <button className="w-full py-3 px-6 border border-[#038c6d] rounded-lg" >
+                            <button onClick={() => handleDelete(subscription)} className="w-full py-3 px-6 border border-[#038c6d] rounded-lg" >
                                 Delete
                             </button>
                             <button onClick={() => showModal(true, subscription)} className="w-full py-3 px-6 border bg-[#038c6d] text-white rounded-lg">
@@ -123,40 +201,55 @@ const Subscription = () => {
                 onCancel={handleCancel}
                 footer={null} // Remove default cancel and ok buttons
             >
-                <div className="mb-4">
-                    <span className="block mb-2 font-semibold">Subscription Package name</span>
-                    <Input
-                        placeholder="Enter subscription name"
-                        value={subscriptionName}
-                        onChange={(e) => setSubscriptionName(e.target.value)}
-                    />
-                </div>
-                <div className="mb-4">
-                    <span className="block mb-2 font-semibold">Subscription Package Price</span>
-                    <Input
-                        placeholder="Enter price"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                    />
-                </div>
-                <div className="mb-4">
-                    <span className="block mb-2 font-semibold">Subscription Package Details</span>
-                    <textarea
-                        className='w-full h-40 border border-gray-300 rounded-md p-2'
-                        placeholder="Enter subscription description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows={4}
-                    />
-                </div>
+                <form onSubmit={isEditing ? handleUpdate : handleSubmit} action="">
+                    <div className="mb-4">
+                        <span className="block mb-2 font-semibold">Subscription Package name</span>
+                        <Input
+                            placeholder="Enter subscription name"
+                            value={subscriptionName}
+                            onChange={(e) => setSubscriptionName(e.target.value)}
+                        />
+                    </div>
 
-                <button
-                    type="primary"
-                    className="w-full py-3 bg-[#038c6d] text-white"
-                    onClick={handleSubmit}
-                >
-                    {isEditing ? 'Update Subscription' : 'Add Subscription'}
-                </button>
+                    <div className='my-3'>
+                        <span className='block mb-2 font-semibold'>Subscription Duration</span>
+                        <select className='w-full border border-gray-300 rounded-md p-2' onChange={(e) => setDuration(e.target.value)} name="duration" value={duration} id="" >
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+
+                    <div className="mb-4">
+                        <span className="block mb-2 font-semibold">Subscription Package Price</span>
+                        <Input
+                            placeholder="Enter price"
+                            value={price}
+                            type="number"
+                            onChange={(e) => setPrice(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <span className="block mb-2 font-semibold">Subscription Package Details</span>
+                        <textarea
+                            className='w-full h-40 border border-gray-300 rounded-md p-2'
+                            placeholder="Enter subscription description"
+                            defaultValue={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows={4}
+                        />
+                    </div>
+
+                    <button
+                        type="primary"
+                        className="w-full py-3 bg-[#038c6d] text-white"
+                    // onClick={handleSubmit}
+                    >
+                        {isEditing ? 'Update Subscription' : 'Add Subscription'}
+                    </button>
+                </form>
+
+
             </Modal>
         </section>
     );

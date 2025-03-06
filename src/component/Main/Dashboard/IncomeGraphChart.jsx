@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useGetDashboardStatusQuery } from "../../../redux/features/dashboard/dashboardApi";
 
 const data = [
   { month: "Jan", income: 5000 },
@@ -39,18 +40,26 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const IncomeGraphChart = () => {
+
+
+   const { data, isLoading } = useGetDashboardStatusQuery();
+  
+    console.log(data);
+  
+
+
   return (
     <section className="w-full col-span-full md:col-span-4 bg-white  rounded-lg border border-[#002831]">
       <div className="border-b border-[#002831]">
       <div className="flex justify-between items-center p-3">
         <h1 className="font-semibold">Income Ratio</h1>
-        <DatePicker />
+        <DatePicker  picker="year" defaultOpenValue={data?.totalAmountOfEarningInDifferentTime?.year} />
       </div>
       </div>
       
       <ResponsiveContainer className="pr-4" width="100%" height={210}>
         <BarChart
-          data={data}
+          data={data?.totalAmountOfEarningInDifferentTime?.incomeData}
           margin={{
             top: 5,
             bottom: 5, 

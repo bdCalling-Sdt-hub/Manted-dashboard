@@ -18,20 +18,23 @@ const SignIn = () => {
   const [login, { isLoading }] = useLoginMutation();
   const handleSubmit = async (values) => {
     const { email, password } = values;
+    const data = {
+      email, password
+    }
     try {
-      const res = await login({ email, password });
+      const res = await login(data).unwrap();
+      console.log(res?.token);
       if (res.error) {
         toast.error(res.error.data.message);
         console.log(res.error.data.message);
       }
-      if (res.data) {
+      if (res) {
         dispatch(
           loggedUser({
-            token: res.data.data.attributes?.tokens?.access?.token,
-            user: res.data.data.attributes?.user,
+            token: res?.token
           })
         );
-        toast.success(res.data.message);
+        toast.success(res?.message);
         navigate("/");
       }
     } catch (error) {
@@ -128,7 +131,7 @@ const SignIn = () => {
           </Form>
         </div>
       </div>
-    </div> 
+    </div>
   );
 };
 

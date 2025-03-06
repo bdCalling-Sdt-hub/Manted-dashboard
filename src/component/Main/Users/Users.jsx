@@ -1,112 +1,89 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { ConfigProvider, Table, Form, Input, DatePicker, Button } from "antd";
+import { ConfigProvider, Table, Form, Input, DatePicker } from "antd";
 import moment from "moment";
-import { useGetAllUsersQuery } from "../../../redux/features/user/userApi";
 import { IoIosSearch } from "react-icons/io";
 import { FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { GoInfo } from "react-icons/go";
+import { useGetAllUsersQuery } from "../../../redux/features/user/userApi";
 
 const { Item } = Form;
 
 const Users = () => {
+  const { data, isFetching, isError, error } = useGetAllUsersQuery({
+    from: 0,
+    to: 10,
+  });
+
+  console.log("Fetched Data:", data?.data?.attributes);
+
   const [searchText, setSearchText] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [dataSource, setDataSource] = useState([]); // ✅ Store filtered data
 
-  const [params] = useState([]);
-  const [allUser, setAllUser] = useState([]);
-  const { data, isFetching, isError, error } = useGetAllUsersQuery(params);
+  const allUsers = data?.data?.attributes;
 
-  const [allUsers, setAllUsers] = useState([
-    {
-      id: 1,
-      accountID: 2010,
-      firstName: "John",
-      lastName: "Doe",
-      email: "johndoe@example.com",
-      address_line1: "123 Main St, Springfield",
-      image: { url: "https://randomuser.me/api/portraits/men/1.jpg" },
-      phone: "123-456-7890",
-      createdAt: "2024-01-01T10:00:00",
-      status: "Only Registered",
-    },
-    {
-      id: 2,
-      accountID: 2010,
-      firstName: "Jane",
-      lastName: "Smith",
-      gender: "Male",
-      email: "janesmith@example.com",
-      address_line1: "456 Oak Ave, Springfield",
-      image: { url: "https://randomuser.me/api/portraits/women/1.jpg" },
-      phone: "234-567-8901",
-      createdAt: "2024-02-01T11:00:00",
-      status: "Subscribers",
-    },
-  ]);
+  // ✅ **Update `dataSource` when API call completes**
+  useEffect(() => {
+    if (allUsers) {
+      const formattedUsers = allUsers.map((user, index) => ({
+        id: user.id || user._id, // Ensure ID exists
+        si: index + 1,
+        fullName: user.fullName,
+        accountID: user.accountID,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        address_line1: user.address_line1,
+        createdAt: user.createdAt,
+        imageUrl: user.image?.url,
+        status: user.status,
+        gender: user.gender,
+      }));
+      setDataSource(formattedUsers);
+    }
+  }, [allUsers]);
 
-  const handleView = (record) => {
-    alert(`View user details: ${record.firstName} ${record.lastName}`);
-  };
+  // ✅ **Search Filter**
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      setDataSource(allUsers || []);
+    } else {
+      setDataSource(
+        allUsers?.filter(
+          (user) =>
+            user.fullName?.toLowerCase().includes(searchText.toLowerCase()) ||
+            user.email?.toLowerCase().includes(searchText.toLowerCase()) ||
+            String(user.phone)?.includes(searchText)
+        ) || []
+      );
+    }
+  }, [searchText, allUsers]);
 
-  const handleDelete = (record) => {
-    alert(`Delete user: ${record.firstName} ${record.lastName}`);
-  };
-
-  const dataSource = allUsers?.map((user, index) => ({
-    id: user.id,
-    si: index + 1,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    accountID: user?.accountID,
-    email: user?.email,
-    phone: user?.phone,
-    address_line1: user?.address_line1,
-    createdAt: user?.createdAt,
-    imageUrl: user?.image?.url,
-    status: user?.status,
-    gender: user?.gender,
-  }));
+  // ✅ **Date Filter**
+  useEffect(() => {
+    if (!selectedDate) {
+      setDataSource(allUsers || []);
+    } else {
+      const formattedDate = selectedDate.format("YYYY-MM-DD");
+      setDataSource(
+        allUsers?.filter((user) => moment(user.createdAt).format("YYYY-MM-DD") === formattedDate) || []
+      );
+    }
+  }, [selectedDate, allUsers]);
 
   const columns = [
     {
-      title: "#SI",
-      dataIndex: "si",
-      key: "si",
+      title: "#SI", dataIndex: "si", key: "si",
+      render: (text, record, index) => {
+        return <span>{index + 1}</span>;
+      }
+
     },
-    {
-      title: "Account ID",
-      dataIndex: "accountID",
-      key: "accountID",
-      render: (_, record) => <span>{record.accountID}</span>,
-    },
-    {
-      title: "First Name",
-      dataIndex: "firstName",
-      key: "firstName",
-    },
-    {
-      title: "Last Name",
-      dataIndex: "lastName",
-      key: "lastName",
-    },
-    {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Phone Number",
-      dataIndex: "phone",
-      key: "phone",
-    },
+    // { title: "Account ID", dataIndex: "accountID", key: "accountID" },
+    { title: "Full Name", dataIndex: "fullName", key: "fullName" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Phone Number", dataIndex: "phoneNumber", key: "phoneNumber" },
     {
       title: "Joined Date",
       dataIndex: "createdAt",
@@ -117,28 +94,18 @@ const Users = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <div className="flex items-center space-x-2">
-          <Link to={`/users/${record.id}`}>
-            <GoInfo className="text-2xl" />
-          </Link>
-        </div>
+        <Link to={`/users/${record.id}`}>
+          <GoInfo className="text-2xl" />
+        </Link>
       ),
     },
   ];
 
-  useEffect(() => {
-    if (isError && error) {
-      setAllUser([]);
-    } else if (data) {
-      setAllUser(data?.data?.attributes?.user?.results);
-    }
-  }, [data, isError, error]);
-
   return (
     <section>
-      <div className="md:flex justify-between items-center py-6  mb-4">
-        <Link to={"/users"} className="text-2xl  flex items-center ">
-          <FaAngleLeft /> User List
+      <div className="md:flex justify-between items-center py-6 mb-4">
+        <Link to={"/collaborator"} className="text-2xl flex items-center">
+          <FaAngleLeft /> Collaborator List
         </Link>
         <Form layout="inline" className="flex space-x-4">
           <Item name="date">
@@ -162,6 +129,7 @@ const Users = () => {
           </Item>
         </Form>
       </div>
+
       <ConfigProvider
         theme={{
           components: {
@@ -174,9 +142,8 @@ const Users = () => {
         }}
       >
         <Table
-          loading={isFetching}
           pagination={{
-            position: ["bottomCenter"], // Moves the pagination to the center
+            position: ["bottomCenter"],
             current: currentPage,
             onChange: setCurrentPage,
           }}
@@ -185,8 +152,8 @@ const Users = () => {
           columns={columns}
           dataSource={dataSource}
           rowKey="id"
+          loading={isFetching}
         />
-
       </ConfigProvider>
     </section>
   );

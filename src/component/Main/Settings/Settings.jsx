@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import {Form, Modal, Switch } from "antd";
+import { Form, message, Modal, Switch } from "antd";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import OTPInput from "react-otp-input";
 // import { useSelector } from "react-redux";
@@ -9,9 +9,10 @@ import { Link, useNavigate } from "react-router-dom";
 import CustomInput from "../../../utils/CustomInput";
 import CustomButton from "../../../utils/CustomButton";
 import { useState } from "react";
+import { useChangePasswordMutation } from "../../../redux/features/auth/authApi";
 
 const Settings = () => {
-  // const { user } = useSelector(state => state?.auth)
+  // const { user } = useSelector(state => state?.auth) 
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modelTitle, setModelTitle] = useState("");
@@ -64,9 +65,32 @@ const Settings = () => {
     }
   };
 
+  const [updatePassword] = useChangePasswordMutation();
   const handleChangePassword = async (values) => {
-    return console.log(values);
-    // const { oldPassword, newPassword } = values;
+
+    const { oldPassword, newPassword } = values;
+    console.log("oldPassword", oldPassword, "newPassword", newPassword);
+    const formData = {
+      oldPassword,
+      newPassword
+    }
+
+    try {
+
+      const res = await updatePassword(formData).unwrap();
+      console.log(res);
+      if (res?.code) {
+        // navigate('')
+        message.success(res?.message);
+        setIsModalOpen(false);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+
+
+
   };
   const handleForgetPassword = async (values) => {
     forgotPassword(values);
@@ -103,7 +127,7 @@ const Settings = () => {
         title={
           <div
             onClick={() => setIsModalOpen(false)}
-            className="flex bg-primary items-center cursor-pointer text-black"
+            className="flex items-center cursor-pointer text-black"
           >
             <h1 className="text-xl  font-medium  mb-5">{modelTitle}</h1>
           </div>
@@ -179,11 +203,11 @@ const Settings = () => {
               >
                 <CustomInput placeholder="Re-enter password" isPassword />
               </Form.Item>
-              <p className=" text-secondary font-medium">
+              {/* <p className=" text-secondary font-medium">
                 <button onClick={() => setModelTitle("Forget password")}>
                   <h1 className="underline text-blue-500"> Forget Password</h1>
                 </button>
-              </p>
+              </p> */}
               <Form.Item className="w-full">
                 <button className="w-full bg-[#038c6d] text-white p-3 text-xl font-semibold rounded-md">Update Password</button>
               </Form.Item>

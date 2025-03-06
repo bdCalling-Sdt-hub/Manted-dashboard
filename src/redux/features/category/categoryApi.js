@@ -4,20 +4,18 @@ const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     addCategory: builder.mutation({
       query: (data) => ({
-        url: "/admin/category",
+        url: "/categories/add",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Categories"],
-      transformResponse: (response) => response?.data?.attributes,
+      invalidatesTags: ["Categories"]
     }),
     getAllCategories: builder.query({
       query: () => ({
-        url: "/admin/categorys",
+        url: "/categories",
         method: "GET",
       }),
-      providesTags: ["Categories"],
-      transformResponse: (response) => response?.data?.attributes,
+      providesTags: ["Categories"]
     }),
     getCategoryById: builder.query({
       query: (id) => ({
@@ -28,25 +26,25 @@ const categoryApi = baseApi.injectEndpoints({
       transformResponse: (response) => response?.data?.attributes,
     }),
     updateCategory: builder.mutation({
-      query: ({id, data}) => ({
-        url: `/admin/category/${id}`,
-        method: "PATCH",
+      query: ({ data }) => ({
+        url: `/categories/update`,
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Categories"],
-      transformResponse: (response) => response?.data?.attributes,
+      invalidatesTags: ["Categories"]
     }),
     deleteCategory: builder.mutation({
       query: (id) => {
         console.log(id)
         return {
-          url: `/admin/category/${id}`,
-          method: "DELETE",
+          url: `/categories/delete/${id}`,
+          method: "POST",
         };
       },
       invalidatesTags: ["Categories"],
       transformResponse: (response) => response?.data,
     }),
+
   }),
 });
 

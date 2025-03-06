@@ -1,19 +1,28 @@
 import { PieChart, Pie, Cell } from 'recharts';
 import { Select } from 'antd';
 import { useState } from 'react';
+import { useGetDashboardStatusQuery } from '../../../redux/features/dashboard/dashboardApi';
 
 const sampleData = {
   august: { totalUsers: 15457, totalEmployees: 9457, month: 'August' },
-  september: { totalUsers: 10457, totalEmployees: 11457,  month: 'September' },
+  september: { totalUsers: 10457, totalEmployees: 11457, month: 'September' },
 };
 
 const Piechart = () => {
+
+  const { data: userData, isLoading } = useGetDashboardStatusQuery();
+
+
+
+  const mainData = userData?.usersDataInDifferentTimes[0];
+
+
   const [month, setMonth] = useState('august');
   const userRatio = sampleData[month]; // Using sample data here
 
   const data = [
-    { name: 'Total Users', value: userRatio.totalUsers },
-    { name: 'Total Employees', value: userRatio.totalEmployees },
+    { name: 'Total Users', value: mainData?.users },
+    { name: 'Total Employees', value: mainData?.collaborators },
   ];
 
   const COLORS = ['#002831', '#92b8c0',];
@@ -39,7 +48,7 @@ const Piechart = () => {
     <div className='w-full col-span-full md:col-span-2 bg-white rounded-lg  border border-[#92b8c0]'>
       <div className='flex justify-between items-center  border-b border-gray-300 py-3'>
         <div className='pl-3'>
-          <h1 className='font-medium text-6'>User Ratio  {userRatio.month}</h1>
+          <h1 className='font-medium text-6'>User Ratio  {mainData?.month}</h1>
         </div>
         <div className='pr-3'>
           <Select
@@ -52,10 +61,10 @@ const Piechart = () => {
             ]}
           />
         </div>
-      </div>  
+      </div>
       <div className='flex justify-around items-center gap-3 mt-3 '>
         <div className='text-white'>
-          <PieChart  width={200} height={200}>
+          <PieChart width={200} height={200}>
             <Pie
               data={data}
               cx="50%"
@@ -74,18 +83,18 @@ const Piechart = () => {
         </div>
         <div>
           <div >
-           <div className='flex items-center'>
-           <div className='bg-[#002831] w-3 h-3 mr-1'></div>
-           <p className='text-[10px] font-normal'>Total Users for {userRatio.month}</p>
-           </div>
-            <h1 className='text-[18px] font-semibold'>{userRatio.totalUsers}k</h1>
+            <div className='flex items-center'>
+              <div className='bg-[#002831] w-3 h-3 mr-1'></div>
+              <p className='text-[10px] font-normal'>Total Users for {mainData?.month}</p>
+            </div>
+            <h1 className='text-[18px] font-semibold'>{mainData?.users}k</h1>
           </div>
           <div className='mt-[23px]'>
-          <div className='flex items-center'>
-          <div className='bg-[#C8D7DE] w-3 h-3  mr-1'></div>
-            <p className='text-[10px] font-normal'>Total Employees for {userRatio.month}</p>
-          </div>
-            <h1 className='text-[18px] font-semibold'>{userRatio.totalEmployees}k</h1>
+            <div className='flex items-center'>
+              <div className='bg-[#C8D7DE] w-3 h-3  mr-1'></div>
+              <p className='text-[10px] font-normal'>Total Employees for {mainData?.month}</p>
+            </div>
+            <h1 className='text-[18px] font-semibold'>{mainData?.collaborators}k</h1>
           </div>
         </div>
       </div>

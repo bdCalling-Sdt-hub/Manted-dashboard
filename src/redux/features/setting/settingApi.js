@@ -7,21 +7,42 @@ const settingApi = baseApi.injectEndpoints({
         url: "/info/terms-condition",
         method: "GET",
       }),
-      transformResponse: (response) => response?.data?.attributes,
     }),
     getPrivacyPolicy: builder.query({
       query: () => ({
         url: "/info/privacy-policy",
         method: "GET",
+        providesTags: ["Privacy-Policy"],
       }),
-      transformResponse: (response) => response?.data?.attributes,
+    }),
+    updatePrivacyPolicy: builder.query({
+      query: (data) => ({
+        url: "/general-info/update/privacy-policy",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Privacy-Policy"],
     }),
     getAboutUs: builder.query({
       query: () => ({
         url: "/info/about-us",
         method: "GET",
       }),
-      transformResponse: (response) => response?.data?.attributes,
+    }),
+    getUserProfile: builder.query({
+      query: () => ({
+        url: "/get-settings-data",
+        method: "GET",
+        providesTags: ["Profile"],
+      }),
+    }),
+    updateProfile: builder.mutation({
+      query: (data) => ({
+        url: "/update-profile",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Profile"],
     }),
   }),
 });
@@ -29,5 +50,8 @@ const settingApi = baseApi.injectEndpoints({
 export const {
   useGetTermsConditionQuery,
   useGetPrivacyPolicyQuery,
+  useUpdatePrivacyPolicyQuery,
   useGetAboutUsQuery,
+  useGetUserProfileQuery,
+  useUpdateProfileMutation,
 } = settingApi;

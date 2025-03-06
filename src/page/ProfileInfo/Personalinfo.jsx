@@ -3,9 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import User_Profile from "/public/Auth/user.png";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { useGetUserProfileQuery } from "../../redux/features/setting/settingApi";
+import Url from "../../redux/baseApi/forImageUrl";
+import { useEffect } from "react";
 
 const Personalinfo = () => {
     const navigate = useNavigate();
+
+    const { data: userProfile, refetch } = useGetUserProfileQuery();
+
+    const user = userProfile?.data;
+    console.log(user);
+
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
 
     return (
         <div className="md:p-4 mt-5 sm:mt-0">
@@ -18,12 +30,12 @@ const Personalinfo = () => {
                 <div className="lg:w-1/3 flex flex-col border border-dotted p-4 justify-center items-center gap-8">
                     <img
                         className="w-40 h-40 border p-2 rounded-full"
-                        src={User_Profile}
+                        src={user?.profileImageUrl ? Url + user?.profileImageUrl : User_Profile}
                         alt="User Profile"
                     />
                     <div className="flex flex-col justify-center items-center text-center">
-                        <p className="text-lg md:text-xl">admin</p>
-                        <h1 className="text-2xl md:text-3xl font-medium">test</h1>
+                        <p className="text-lg md:text-xl">{user?.role}</p>
+                        <h1 className="text-2xl md:text-3xl font-medium">{user?.fullName}</h1>
                     </div>
                 </div>
 
@@ -39,7 +51,7 @@ const Personalinfo = () => {
                                 </label>
                                 <Input
                                     placeholder="First name"
-                                    value="test" // Raw text for name
+                                    value={user?.fullName} // Raw text for name
                                     className="p-4 cursor-pointer text-lg md:text-xl bg-[#ebf5f5] text-black rounded w-full mt-3 outline-none"
                                     type="text"
                                     readOnly
@@ -53,7 +65,7 @@ const Personalinfo = () => {
                             </label>
                             <Input
                                 placeholder="Email"
-                                value="test@example.com" // Raw text for email
+                                value={user?.email}// Raw text for email
                                 className="p-4 text-lg md:text-xl bg-[#ebf5f5] rounded w-full mt-3 outline-none"
                                 type="text"
                                 readOnly
@@ -66,7 +78,7 @@ const Personalinfo = () => {
                             </label>
                             <Input
                                 placeholder="Phone"
-                                value="+1234567890" // Raw text for phone number
+                                value={user?.phoneNumber}// Raw text for phone number
                                 className="p-4 text-lg md:text-xl bg-[#ebf5f5] rounded w-full mt-3 outline-none"
                                 type="text"
                                 readOnly

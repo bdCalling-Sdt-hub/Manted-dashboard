@@ -2,12 +2,20 @@ import { ConfigProvider, Table, Pagination, Space, message } from "antd";
 import { useState } from "react";
 import { FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useGetDashboardStatusQuery } from "../../../redux/features/dashboard/dashboardApi";
+import moment from "moment";
+import { useBlockUserMutation, useUnBlockUserMutation } from "../../../redux/features/user/userApi";
 
 const RecentTransactions = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
   const [pageSize, setPageSize] = useState(5); // Items per page
+
+  const { data: userData, isLoading } = useGetDashboardStatusQuery();
+
+  const recentUsers = userData?.recentUsers;
+  console.log(recentUsers);
 
   const data = [
     {
@@ -52,9 +60,40 @@ const RecentTransactions = () => {
     // More data
   ];
 
-  const handleDelete = (record) => {
-    message.success("User deleted successfully!");
+  const [userBlock] = useBlockUserMutation();
+  const [userUnBlock] = useUnBlockUserMutation();
+
+  // console.log(id);
+
+  const handleUserRemove = async () => {
+
+    try {
+
+      const res = await userBlock(id);
+
+      console.log(res);
+      if (res.error) {
+        message.error(res.error.data.message);
+      }
+      if (res.data) {
+        message.success(res.data.message);
+      }
+
+    } catch (error) {
+      message.error("Something went wrong");
+    }
+
   };
+
+  const handleUserUnBlock = async () => {
+    try {
+
+      const res = await userUnBlock(id);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const columns = [
     {
@@ -76,9 +115,9 @@ const RecentTransactions = () => {
       align: "center",
     },
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
       align: "center",
     },
     {
@@ -93,6 +132,7 @@ const RecentTransactions = () => {
       align: "center",
       render: (_, record) => (
         <Space size="middle" className="flex flex-row justify-center">
+
           <button
             onClick={() => handleDelete(record)}
             style={{
@@ -112,7 +152,7 @@ const RecentTransactions = () => {
     },
   ];
 
-  const filteredData = data.filter((user) => {
+  const filteredData = recentUsers?.filter((user) => {
     const matchesText =
       `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchText.toLowerCase());
     const matchesDate = selectedDate
@@ -122,13 +162,13 @@ const RecentTransactions = () => {
     return matchesText && matchesDate;
   });
 
-  const dataSource = filteredData.map((user, index) => ({
+  const dataSource = filteredData?.map((user, index) => ({
     key: user.id,
     si: index + 1,
-    userName: `${user.firstName} ${user.lastName}`,
+    userName: `${user?.fullName}`,
     email: user.email,
-    location: user.location,
-    joinDate: user.date,
+    role: user.role,
+    joinDate: user.createdAt.split(",")[0],
   }));
 
   return (
@@ -163,7 +203,7 @@ const RecentTransactions = () => {
         <Pagination
           current={currentPage}
           pageSize={pageSize}
-          total={filteredData.length}
+          total={filteredData?.length}
           onChange={(page, pageSize) => {
             setCurrentPage(page);
             setPageSize(pageSize);
