@@ -27,7 +27,7 @@ const sidebarItems = [
   },
   {
     path: "/assets",
-    name: "Asset",
+    name: "Categories",
     icon: <GoHomeFill className="size-6" />,
   },
   {
@@ -105,8 +105,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `w-[80%] mx-auto px-5 py-2 flex justify-start items-center gap-3 text-white ${
-                  isActive ? "bg-white !text-black border-l-4 border-[#f13919]" : ""
+                `w-[80%] mx-auto px-5 py-2 flex justify-start items-center gap-3 text-white ${isActive ? "bg-white !text-black border-l-4 border-[#f13919]" : ""
                 }`
               }
             >
@@ -126,9 +125,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 z-40 w-64 h-full bg-[#038c6d] shadow-lg transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out md:hidden`}
+        className={`fixed top-0 left-0 z-40 w-64 h-full bg-[#038c6d] shadow-lg transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out md:hidden`}
       >
         <div className="flex flex-col justify-center items-center pt-5 gap-2 bg-white text-white">
           <img src={logo} alt="logo" className="h-20 mb-5" />
@@ -140,8 +138,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               to={item.path}
               onClick={toggleSidebar} // Close sidebar on link click
               className={({ isActive }) =>
-                `w-[70%] mx-auto px-5 py-2 flex items-center gap-3 text-white ${
-                  isActive ? "bg-[#038c6d] " : ""
+                `w-[70%] mx-auto px-5 py-2 flex items-center gap-3 text-white ${isActive ? "bg-[#038c6d] " : ""
                 }`
               }
             >

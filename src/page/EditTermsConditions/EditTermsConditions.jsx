@@ -1,19 +1,43 @@
 import { IoChevronBack } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import { Button, Form } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Form, message } from "antd";
 import ReactQuill from "react-quill"; // Import React Quill
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { useState } from "react";
+import { useUpdateTramsAndConditionsAllMutation } from "../../redux/features/setting/settingApi";
 
 const EditTermsConditions = () => {
+
+  const [updateTramsAndCondition, { isLoading }] = useUpdateTramsAndConditionsAllMutation();
+
+  const navigate = useNavigate();
+
+
+
+
+
   const [form] = Form.useForm();
   const [content, setContent] = useState(
-    "<h1>Enter your 'Terms and Conditions' content here.</h1>"
+    ""
   ); // Default content for the Terms and Conditions section
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("Updated Terms and Conditions Content:", content);
     // Handle form submission, e.g., update the Terms and Conditions in the backend
+
+    try {
+      const res = await updateTramsAndCondition({ termsAndConditions: content }).unwrap();
+      console.log(res);
+      if (res?.success) {
+        message.success(res?.message);
+        navigate("/settings/terms-conditions");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+
+
   };
 
   return (
@@ -56,7 +80,7 @@ const EditTermsConditions = () => {
           </Form.Item>
 
           {/* Update Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end md:mt-0 mt-40">
             <button
               // type="primary"
               // htmlType="submit"

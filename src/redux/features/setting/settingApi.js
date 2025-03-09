@@ -2,33 +2,59 @@ import { baseApi } from "../../baseApi/baseApi";
 
 const settingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getTermsCondition: builder.query({
+
+    getAllSettings: builder.query({
       query: () => ({
-        url: "/info/terms-condition",
+        url: "/general-info",
         method: "GET",
+        providesTags: ["Setting"],
       }),
     }),
-    getPrivacyPolicy: builder.query({
-      query: () => ({
-        url: "/info/privacy-policy",
-        method: "GET",
-        providesTags: ["Privacy-Policy"],
-      }),
-    }),
-    updatePrivacyPolicy: builder.query({
+
+    updatePrivacyPolicyAll: builder.mutation({  // ✅ FIXED: Use mutation instead of query
       query: (data) => ({
         url: "/general-info/update/privacy-policy",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Privacy-Policy"],
+      invalidatesTags: ["Setting"],
     }),
-    getAboutUs: builder.query({
-      query: () => ({
-        url: "/info/about-us",
-        method: "GET",
+
+
+    addFaqMain: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (data) => ({
+        url: "/general-info/add-new-faq",
+        method: "POST",
+        body: data,
       }),
     }),
+    deleteFaq: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (data) => ({
+        url: `/general-info/delete-faq`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+
+    updateTramsAndConditionsAll: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (data) => ({
+        url: "/general-info/update/terms-and-conditions",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+    updateAboutUs: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (data) => ({
+        url: "/general-info/update/about-us",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+
+
     getUserProfile: builder.query({
       query: () => ({
         url: "/get-settings-data",
@@ -36,6 +62,7 @@ const settingApi = baseApi.injectEndpoints({
         providesTags: ["Profile"],
       }),
     }),
+
     updateProfile: builder.mutation({
       query: (data) => ({
         url: "/update-profile",
@@ -44,14 +71,33 @@ const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Profile"],
     }),
+
+
+    getAllNotification: builder.query({
+      query: () => ({
+        url: "/notifications",
+        method: "GET",
+        providesTags: ["Notification"],
+      }),
+    }),
+
+
+
+
   }),
 });
 
 export const {
-  useGetTermsConditionQuery,
-  useGetPrivacyPolicyQuery,
-  useUpdatePrivacyPolicyQuery,
-  useGetAboutUsQuery,
+  useGetAllSettingsQuery,
+  useUpdatePrivacyPolicyAllMutation, // ✅ FIXED: Mutation hook 
+  useUpdateTramsAndConditionsAllMutation,
+
+  useAddFaqMainMutation,
+  useDeleteFaqMutation,
+
+  useUpdateAboutUsMutation,
   useGetUserProfileQuery,
   useUpdateProfileMutation,
+
+  useGetAllNotificationQuery
 } = settingApi;

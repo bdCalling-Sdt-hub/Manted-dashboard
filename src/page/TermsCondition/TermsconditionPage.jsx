@@ -2,11 +2,20 @@ import { IoChevronBack } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { TbEdit } from "react-icons/tb";
 import CustomButton from "../../utils/CustomButton";
-import { useGetTermsConditionQuery } from "../../redux/features/setting/settingApi";
 import { Spin } from "antd"; // Importing Spin
+import { useEffect } from "react";
+import { useGetAllSettingsQuery } from "../../redux/features/setting/settingApi";
 
 const TermsconditionPage = () => {
-  const { data: termsConditionsData, isLoading } = useGetTermsConditionQuery();
+
+
+  const { data: privacyPolicy, isLoading, refetch } = useGetAllSettingsQuery();
+
+  console.log(privacyPolicy?.termsAndConditions);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <section className="w-full h-full min-h-screen">
@@ -29,31 +38,21 @@ const TermsconditionPage = () => {
       </div>
 
       {/* Show Spin loader if data is loading */}
-      {isLoading
-        ? <div className="flex justify-center items-center h-[calc(100vh-120px)]">
-          <Spin />
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Spin size="large" />
         </div>
-        : <div>
-          {termsConditionsData &&
-            termsConditionsData.map(term =>
-              <p key={term._id} className="text-lg p-10">
-                {/* {term.content} */}
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim
-                repellat facere laudantium voluptates! Sapiente temporibus non
-                officia eligendi vitae repellendus dolorum impedit,
-                consequuntur aspernatur, rem autem labore, provident quaerat
-                voluptates odio. Consectetur amet quo deserunt autem? Ducimus
-                quia eius, at sequi aperiam quibusdam voluptatum eligendi
-                praesentium, necessitatibus hic, dolorem omnis rem quo? Ex,
-                maxime? Obcaecati nesciunt harum omnis asperiores maxime
-                sapiente architecto ad quae necessitatibus at? Sunt eveniet
-                ipsa aliquam iusto voluptatibus quasi enim. Iste rem enim
-                totam, nobis qui repudiandae nam placeat a delectus, explicabo
-                dolor. Est aliquam quam explicabo ratione deleniti quidem quo,
-                veritatis, commodi velit illum minus.
-              </p>
-            )}
-        </div>}
+      )
+        :
+        (
+          <div className="w-full h-full ml-3">
+            <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.termsAndConditions }} />
+          </div>
+        )
+      }
+
+      {/* Show content if data is available */}
+
     </section>
   );
 };

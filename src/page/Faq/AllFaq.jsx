@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { Modal, Button, Input, Form, notification } from 'antd';
 import { FaPlus } from 'react-icons/fa';
+import { useAddFaqMainMutation, useDeleteFaqMutation, useGetAllSettingsQuery } from '../../redux/features/setting/settingApi';
 
 const AllFaq = () => {
+
+    const { data: allFaq, refetch } = useGetAllSettingsQuery();
+    const [faqsDelete] = useDeleteFaqMutation();
+    const [addFaq] = useAddFaqMainMutation();
+
+
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [faqs, setFaqs] = useState([
-        { question: "What is React?", answer: "React is a JavaScript library for building user interfaces." },
-        { question: "What is a hook in React?", answer: "A hook is a special function that lets you hook into React features." },
-        // Add initial FAQ items if needed
-    ]);
+
 
     const [form] = Form.useForm();  // Form reference for modal
 
@@ -22,29 +28,54 @@ const AllFaq = () => {
         setIsModalVisible(false); // Close the modal
     };
 
-    const handleAddFaq = (values) => {
+    const handleAddFaq = async (values) => {
         // Add the new FAQ to the list
-        setFaqs([...faqs, { question: values.question, answer: values.answer }]);
+        console.log(values);
 
-        // Notify the user about successful addition
-        notification.success({
-            message: 'FAQ Added Successfully!',
-        });
+        try {
+
+            const res = await addFaq(values).unwrap();
+            console.log(res);
+
+            if (res?.success) {
+                notification.success({
+                    message: 'FAQ Added Successfully!',
+                });
+                refetch();
+                setIsModalVisible(false);
+                form.resetFields();  // Reset the form fields
+            }
+
+
+
+        } catch (error) {
+            console.log(error);
+        }
 
         // Close the modal after adding FAQ
-        setIsModalVisible(false);
-        form.resetFields();  // Reset the form fields
     };
 
-    const handleDelete = (index) => {
-        // Remove the FAQ at the given index
-        const updatedFaqs = faqs.filter((_, i) => i !== index);
-        setFaqs(updatedFaqs);
+    const handleDelete = async (faq) => {
 
-        // Notify the user about successful deletion
-        notification.success({
-            message: 'FAQ Deleted Successfully!',
-        });
+        console.log(faq);
+
+        try {
+
+            const res = await faqsDelete({ question: faq?.question });
+            console.log(res);
+            if (res?.data?.success) {
+                notification.success({
+                    message: 'FAQ Added Successfully!',
+                });
+                refetch();
+
+            }
+
+
+
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -59,7 +90,7 @@ const AllFaq = () => {
                         className="bg-[#038c6d] text-white px-10 py-3 text-xl rounded-lg flex items-center gap-2"
                         onClick={showModal} // Open modal when clicking the button
                     >
-                       <FaPlus className='text-xl font-semibold text-white' /> Add FAQ
+                        <FaPlus className='text-xl font-semibold text-white' /> Add FAQ
                     </button>
                 </div>
             </div>
@@ -69,7 +100,7 @@ const AllFaq = () => {
                 {/* <h2 className="text-2xl font-medium">All FAQs</h2> */}
                 <div className="my-5 ">
                     <div>
-                        {faqs.map((faq, index) => (
+                        {allFaq?.faqs?.map((faq, index) => (
                             <div key={index} className=" flex items-center justify-between border-b py-10">
                                 <div>
                                     <p className="font-medium text-lg">{faq.question}</p>
@@ -77,7 +108,7 @@ const AllFaq = () => {
                                 </div>
                                 <div>
                                     <button
-                                        onClick={() => handleDelete(index)} // Call delete function on button click
+                                        onClick={() => handleDelete(faq)} // Call delete function on button click
                                         className='bg-[#dd1811] text-white md:px-10 px-6 py-3 rounded-lg'
                                     >
                                         Delete

@@ -2,11 +2,22 @@ import { IoChevronBack } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { TbEdit } from "react-icons/tb";
 import CustomButton from "../../utils/CustomButton";
-import { useGetAboutUsQuery } from "../../redux/features/setting/settingApi";
 import { Spin } from "antd"; // Importing Spin
+import { useGetAllSettingsQuery } from "../../redux/features/setting/settingApi";
+import { useEffect } from "react";
 
 const AboutUsPage = () => {
-  const { data: aboutUsData, isLoading } = useGetAboutUsQuery();
+
+
+  const { data: privacyPolicy, isLoading, refetch } = useGetAllSettingsQuery();
+
+  console.log(privacyPolicy?.termsAndConditions);
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
+
 
   return (
     <section className="w-full h-full min-h-screen">
@@ -29,32 +40,15 @@ const AboutUsPage = () => {
       </div>
 
       {/* Show Spin loader if data is loading */}
-      {isLoading
-        ? <div className="flex justify-center items-center h-[calc(100vh-120px)]">
-          <Spin />
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Spin size="large" />
         </div>
-        : <div>
-          {aboutUsData &&
-            aboutUsData.map(about =>
-              <p key={about._id} className="text-lg p-10">
-                {/* {about.content} */}
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Dolorem repudiandae deleniti hic asperiores fugit minus
-                impedit consectetur placeat aliquid totam. Corrupti nulla,
-                dolores repellendus sed ad tempora commodi magni laudantium
-                optio quae eligendi dicta officia error nihil quisquam
-                molestias explicabo cum aperiam doloribus sapiente magnam
-                asperiores ratione vero. Quod sint, rem tempora sunt expedita
-                accusamus facilis fuga atque dolorum, consequatur quidem
-                voluptates rerum eveniet? Corrupti, at inventore repellendus
-                sapiente, suscipit necessitatibus expedita impedit quos,
-                voluptas nam sint aliquid nisi optio. Officiis sunt
-                voluptatibus eos, numquam quis aspernatur dolorum optio,
-                officia dicta quidem maiores mollitia fugiat quasi dolorem
-                minus ipsam ipsum.
-              </p>
-            )}
-        </div>}
+      ) : (
+        <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.aboutUs }} />
+      )}
+
+
     </section>
   );
 };
