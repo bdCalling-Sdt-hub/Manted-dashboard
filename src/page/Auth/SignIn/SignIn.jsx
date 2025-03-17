@@ -35,7 +35,7 @@ const SignIn = () => {
           })
         );
         toast.success(res?.message);
-        navigate("/");
+        return navigate("/");
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -50,7 +50,7 @@ const SignIn = () => {
             alt="Sign in illustration"
       /> */}
       <div className="w-full max-w-7xl mx-auto border-shadow rounded-md h-[70%] md:my-28 grid grid-cols-1 md:grid-cols-2 place-content-center px-5 py-10 gap-8 bg-white md:mx-10">
-        <div className="flex justify-center">
+        <div className="hidden md:flex justify-center">
           <img
             src={signinImage}
             className="w-full h-full mx-auto"

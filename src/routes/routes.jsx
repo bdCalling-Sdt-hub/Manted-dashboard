@@ -45,6 +45,7 @@ import PersonalinfoEdit from "../page/ProfileInfo/PersonalinfoEdit";
 import AllFaq from "../page/Faq/AllFaq";
 import AllDocument from "../component/Main/AllDocument/AllDocument";
 import Lawyera from "../page/Lawyer/Lawyera";
+import PrivetRoute from "../PrivetRoute/PrivetRoute";
 
 
 
@@ -54,7 +55,7 @@ const router = createBrowserRouter([
     element: (
       // <AdminRoutes>
       // </AdminRoutes>
-      <MainLayout />
+      <PrivetRoute>  <MainLayout /></PrivetRoute>
     ),
     errorElement: <h1>Error</h1>,
     children: [

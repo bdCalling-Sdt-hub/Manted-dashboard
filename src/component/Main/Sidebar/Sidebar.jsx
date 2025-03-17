@@ -107,7 +107,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   return (
     <div>
       {/* Desktop Sidebar */}
-      <div className="hidden md:block w-full md:w-[200px] lg:w-[250px] xl:w-[280px] h-full bg-[#038c6d] fixed shadow-2xl">
+      <div className="hidden overflow-y-auto md:block w-full md:w-[200px] lg:w-[250px] xl:w-[280px] h-full bg-[#038c6d] fixed shadow-2xl">
         <Link to={"/"} className="flex flex-col justify-center items-center pt-5 gap-2 bg-white mb-10 text-black">
           <img src={logo} alt="logo" className="w-[60px] mb-5 " />
         </Link>
@@ -126,24 +126,26 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             </NavLink>
           ))}
         </ul>
+
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1 font-bold px-10 py-4 text-black  md:ml-6 lg:ml-9 lg:mt-72"
+          className="flex items-center gap-1 font-bold px-10 py-4 text-black  ml-6 mt-5"
         >
           <IoIosLogOut className="size-8  p-1 text-white rounded-md" />
           <span className="text-white">Logout</span>
         </button>
+
       </div>
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 z-40 w-64 h-full bg-[#038c6d] shadow-lg transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed top-0 overflow-y-auto left-0 z-40 w-64 h-full bg-[#038c6d] shadow-lg transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } transition-transform duration-300 ease-in-out md:hidden`}
       >
         <div className="flex flex-col justify-center items-center pt-5 gap-2 bg-white text-white">
           <img src={logo} alt="logo" className="h-20 mb-5" />
         </div>
-        <ul className="flex flex-col gap-3 my-10">
+        <ul className="flex flex-col gap-3 mt-10">
           {sidebarItems.map((item) => (
             <NavLink
               key={item.name}
@@ -159,12 +161,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             </NavLink>
           ))}
         </ul>
+
         <button
           onClick={() => {
             setShowModal(true);
             toggleSidebar();
           }}
-          className="flex items-center gap-2 px-10 pt-20  ml-5"
+          className="flex items-center gap-2 px-10 ml-5 mt-5"
         >
           <IoIosLogOut className="size-8   p-1 text-white rounded-md" />
           <span className="text-black">Logout</span>
