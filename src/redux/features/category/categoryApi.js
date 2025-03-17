@@ -41,8 +41,7 @@ const categoryApi = baseApi.injectEndpoints({
           method: "POST",
         };
       },
-      invalidatesTags: ["Categories"],
-      transformResponse: (response) => response?.data,
+      invalidatesTags: ["Categories"]
     }),
 
   }),

@@ -86,6 +86,8 @@ const Earnings = () => {
     }
   };
 
+  console.log(selectedTransaction);
+
   return (
     <div className="w-full p-5 overflow-x-auto">
       <div className="w-full md:flex justify-between items-center py-6">
@@ -121,7 +123,7 @@ const Earnings = () => {
           <thead className="bg-[#92b8c0]">
             <tr>
               <th className="border-gray-300 px-4 py-2 text-left">Transaction ID</th>
-              <th className="border-gray-300 px-4 py-2 text-left">Card Brand</th>
+              {/* <th className="border-gray-300 px-4 py-2 text-left">Card Brand</th> */}
               <th className="border-gray-300 px-4 py-2 text-left">Currency</th>
               <th className="border-gray-300 px-4 py-2 text-left">Amount</th>
               <th className="border-gray-300 px-4 py-2 text-left">Status</th>
@@ -134,11 +136,11 @@ const Earnings = () => {
             {filteredEarnings.map((row, index) => (
               <tr key={row?.id} className="hover:bg-gray-50">
                 <td className="border-gray-300 px-4 py-2">{row?.transactionId}</td>
-                <td className="border-gray-300 px-4 py-2">{row?.cardBrand}</td>
+                {/* <td className="border-gray-300 px-4 py-2">{row?.cardBrand}</td> */}
                 <td className="border-gray-300 px-4 py-2">{row?.currency}</td>
                 <td className="border-gray-300 px-4 py-2">{row?.amount}</td>
+                <td className="border-gray-300 px-4 py-2">Success</td>
                 <td className="border-gray-300 px-4 py-2">{row?.status}</td>
-                <td className="border-gray-300 px-4 py-2">{row?.paymentMethod}</td>
                 <td className="border-gray-300 px-4 py-2">{new Date(row?.updatedAt).toLocaleDateString()}</td>
                 <td className="border-gray-300 px-4 py-2">
                   <div onClick={() => showModal(row)} className="cursor-pointer">
@@ -173,10 +175,10 @@ const Earnings = () => {
               <p>{selectedTransaction?.transactionId}</p>
             </div>
 
-            <div className="mb-4 flex items-center justify-between">
+            {/* <div className="mb-4 flex items-center justify-between">
               <p className="font-semibold">Card Brand:</p>
               <p>{selectedTransaction?.cardBrand}</p>
-            </div>
+            </div> */}
 
             <div className="mb-4 flex items-center justify-between">
               <p className="font-semibold">Currency:</p>
@@ -190,12 +192,12 @@ const Earnings = () => {
 
             <div className="mb-4 flex items-center justify-between">
               <p className="font-semibold">Status:</p>
-              <p>{selectedTransaction?.status}</p>
+              <p>Success</p>
             </div>
 
             <div className="mb-4 flex items-center justify-between">
               <p className="font-semibold">Payment Method:</p>
-              <p>{selectedTransaction?.paymentMethod}</p>
+              <p>{selectedTransaction?.status}</p>
             </div>
 
             <button onClick={downloadPDF} className="border border-[#92b8c0] w-full px-4 py-2 rounded text-black font-semibold mt-4">

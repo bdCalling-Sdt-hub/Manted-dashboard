@@ -43,6 +43,8 @@ import Subscription from "../page/Subscription/Subscription";
 import Personalinfo from "../page/ProfileInfo/Personalinfo";
 import PersonalinfoEdit from "../page/ProfileInfo/PersonalinfoEdit";
 import AllFaq from "../page/Faq/AllFaq";
+import AllDocument from "../component/Main/AllDocument/AllDocument";
+import Lawyera from "../page/Lawyer/Lawyera";
 
 
 
@@ -68,11 +70,17 @@ const router = createBrowserRouter([
         path: "users/:id",
         element: <UserDetails />,
       },
+
+      {
+        path: "lawyer",
+        element: <Lawyera />,
+      },
+
+
       {
         path: "assets",
         element: <CategoriesPage />,
       },
-
 
       {
         path: "collaborator",
@@ -143,10 +151,13 @@ const router = createBrowserRouter([
 
 
 
-      // {
-      //   path: "subscription/add-box",
-      //   element: <AddCategoryPage />,
-      // },
+      {
+        path: "/all-document",
+        element: <AllDocument />,
+      },
+
+
+
       // {
       //   path: "subscription/edit-box/:id",
       //   element: <EditCategoriesBoxPage />,

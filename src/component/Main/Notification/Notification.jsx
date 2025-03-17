@@ -14,16 +14,7 @@ const Notification = () => {
 
 
   // Sample data
-  const notifications = [
-    { id: 1, message: "You have a new order delivery for Luke.", time: "2 Min Ago" },
-    { id: 2, message: "You have shipment 5 days for Luke.", time: "2 Min Ago" },
-    { id: 3, message: "You have a new message from Luke.", time: "2 Min Ago" },
-    { id: 4, message: "You have a new message from Luke.", time: "2 Min Ago" },
-    { id: 5, message: "You have a new message from Luke.", time: "2 Min Ago" },
-    { id: 6, message: "You have a new message from Luke.", time: "2 Min Ago" },
-    { id: 7, message: "You have shipment 5 days for Luke.", time: "2 Min Ago" },
-    { id: 8, message: "You have a new order delivery for Luke.", time: "2 Min Ago" },
-  ];
+
 
   const pageSize = 10;
 
@@ -60,7 +51,7 @@ const Notification = () => {
       <div className="mt-4 flex justify-center">
         <Pagination
           current={currentPage}
-          total={notifications.length}
+          total={allNotification?.notifications.length}
           pageSize={pageSize}
           onChange={onPageChange}
         />

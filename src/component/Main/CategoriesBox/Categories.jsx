@@ -174,7 +174,13 @@ const Categories = () => {
     try {
 
       const res = await deleteCategory(categoryId?.id).unwrap();
+
       console.log(res);
+      // message.success(res?.message);
+
+      if (res) {
+        message.success(res?.message);
+      }
 
 
     } catch (error) {

@@ -13,6 +13,7 @@ import { MdDashboard, MdOutlineContactPage } from "react-icons/md";
 import { HiLightBulb } from "react-icons/hi";
 import { FaRegMoneyBill1, FaSackDollar } from "react-icons/fa6";
 import { GoHomeFill } from "react-icons/go";
+import { GrDocumentImage } from "react-icons/gr";
 
 const sidebarItems = [
   {
@@ -25,10 +26,21 @@ const sidebarItems = [
     name: "User",
     icon: <FaUserAlt className="size-6" />,
   },
+
+  {
+    path: "/lawyer",
+    name: "Lawyer",
+    icon: <FaUsers className="size-6" />,
+  },
   {
     path: "/assets",
     name: "Categories",
     icon: <GoHomeFill className="size-6" />,
+  },
+  {
+    path: "/all-document",
+    name: "All Document",
+    icon: <GrDocumentImage className="size-5" />,
   },
   {
     path: "/collaborator",
