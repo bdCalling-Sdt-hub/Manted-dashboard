@@ -8,12 +8,12 @@ const RecentTransactions = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const [pageSize, setPageSize] = useState(5); // Items per page
+  const [pageSize, setPageSize] = useState(6); // Items per page
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); // Store selected user details
 
   const { data: userData, isLoading } = useGetDashboardStatusQuery();
-  const recentUsers = userData?.recentUsers;
+  const recentUsers = userData?.recentUsers.slice(0, 8);
 
   const [userBlock] = useBlockUserMutation();
   const [userUnBlock] = useUnBlockUserMutation();

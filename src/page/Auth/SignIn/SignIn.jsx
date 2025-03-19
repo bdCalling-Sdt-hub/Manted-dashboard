@@ -24,6 +24,9 @@ const SignIn = () => {
     try {
       const res = await login(data).unwrap();
       console.log(res?.token);
+
+      navigate("/");
+
       if (res.error) {
         toast.error(res.error.data.message);
         console.log(res.error.data.message);
@@ -35,8 +38,11 @@ const SignIn = () => {
           })
         );
         toast.success(res?.message);
-        return navigate("/");
       }
+
+      navigate("/");
+
+
     } catch (error) {
       toast.error("Something went wrong");
     }

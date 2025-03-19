@@ -9,7 +9,7 @@ const PrivetRoute = ({ children }) => {
     const { data, isLoading } = useGetUserProfileQuery()
 
     if (isLoading) {
-        return <h1 className='text-3xl font-semibold text-center text-blue-600'>Loading...</h1>
+        return <h1 className='text-3xl font-semibold text-center text-blue-600 h-screen flex items-center justify-center'>Loading...</h1>
     }
 
     if (!data?.data?.email) {
