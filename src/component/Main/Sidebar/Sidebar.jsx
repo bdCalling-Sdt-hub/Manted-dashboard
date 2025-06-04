@@ -14,6 +14,7 @@ import { HiLightBulb } from "react-icons/hi";
 import { FaRegMoneyBill1, FaSackDollar } from "react-icons/fa6";
 import { GoHomeFill } from "react-icons/go";
 import { GrDocumentImage } from "react-icons/gr";
+import { RxCross1 } from "react-icons/rx";
 
 const sidebarItems = [
   {
@@ -142,6 +143,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         className={`fixed top-0 overflow-y-auto left-0 z-40 w-64 h-full bg-[#038c6d] shadow-lg transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } transition-transform duration-300 ease-in-out md:hidden`}
       >
+        <div onClick={toggleSidebar} className="absolute top-0 right-0 p-4">
+          <RxCross1 className="size-6 text-black" />
+        </div>
         <div className="flex flex-col justify-center items-center pt-5 gap-2 bg-white text-white">
           <img src={logo} alt="logo" className="h-20 mb-5" />
         </div>

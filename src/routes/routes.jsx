@@ -55,7 +55,9 @@ const router = createBrowserRouter([
     element: (
       // <AdminRoutes>
       // </AdminRoutes>
-      <PrivetRoute>  <MainLayout /></PrivetRoute>
+      // <PrivetRout1e>  
+        <MainLayout />
+      // </PrivetRout1e>
     ),
     errorElement: <h1>Error</h1>,
     children: [
