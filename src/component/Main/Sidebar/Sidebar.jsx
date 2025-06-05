@@ -147,7 +147,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           <RxCross1 className="size-6 text-black" />
         </div>
         <div className="flex flex-col justify-center items-center pt-5 gap-2 bg-white text-white">
-          <img src={logo} alt="logo" className="h-20 mb-5" />
+          <img src={logo} alt="logo"  className="h-20 mb-5" />
         </div>
         <ul className="flex flex-col gap-3 mt-10">
           {sidebarItems.map((item) => (
